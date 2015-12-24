@@ -18,7 +18,22 @@ best <- function(state, outcome){
   ##check outcome is valid
   validCheck <- sum(outcome == validOutcome)
   if (validCheck == 0) stop(print("invalid outcome"))
- else {print("continue")}
-  ##return the hospital name in that state with lowest 30-day death rate
+
+  #return the hospital name in that state with lowest 30-day death rate
   
+  ##first, create subset for state
+  state_subset <- careMeasures[,7] == state
+  ##create subset to drop all NAs
+  if(outcome=="heart attack"){na_subset <- is.na(as.numeric(careMeasures[,11]))}
+  if(outcome=="heart failure"){na_subset <- is.na(as.numeric(careMeasures[,17]))}
+  if(outcome=="pneumonia"){na_subset <- is.na(as.numeric(careMeasures[,23]))}
+  #combine subsets and apply to dataframe
+  master_subset <- state_subset*!na_subset
+  subCareM <- careM[master_subset]
+  ##get location of lowest value
+  if(outcome=="heart attack"){min_location <- which.min(subCareM[,11])}
+  if(outcome=="heart failure"){min_location <- which.min(subCareM[,17])}
+  if(outcome=="pneumonia"){min_location <- which.min(subCareM[,23])}
+  hospName <- subCareM[,2]
+  hospName[min_location]
 }
