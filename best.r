@@ -1,7 +1,3 @@
-OgDir <- getwd()
-setwd("C:/Users/SDS/Documents/R")
-
-head(outcome)
 best <- function(state, outcome){
   ##read outcome data
   outcome <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
@@ -11,15 +7,13 @@ best <- function(state, outcome){
     uniqCheck <- as.numeric(0)
     #check against this list with loop. This is where I left off
     for (i in seq_along(uniqueST)){
-      if(uniqueST[i] == state){
-        uniqCheck <- uniqCheck+1
-      }
+      if(uniqueST[i] == state){uniqCheck <- uniqCheck+1}
     }
     if (uniqCheck == 0) print("The state abbreviation is invalid")
-    else{#check if outcome is valid here}
   ##check outcome is valid
   if (outcome != "heart attack" || "heart failure" || "pneumonia"){
     print("The outcome is invalid")
   }
   ##return the hospital name in that state with lowest 30-day death rate
+    
 }
