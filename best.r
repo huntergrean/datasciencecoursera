@@ -1,19 +1,24 @@
 best <- function(state, outcome){
   ##read outcome data
-  outcome <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
+  careMeasures <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
   ##check state is valid
-    #create list of unique existing state names
-    uniqueST <- unique(outcome[,7])
-    uniqCheck <- as.numeric(0)
-    #check against this list with loop. This is where I left off
-    for (i in seq_along(uniqueST)){
-      if(uniqueST[i] == state){uniqCheck <- uniqCheck+1}
-    }
-    if (uniqCheck == 0) print("The state abbreviation is invalid")
-  ##check outcome is valid
-  if (outcome != "heart attack" || "heart failure" || "pneumonia"){
-    print("The outcome is invalid")
+  #create vector of unique existing state names
+  uniqueST <- unique(careMeasures[,7])
+  uniqCheck <- as.numeric(0)
+  #create vector of valid outcomes
+  validOutcome <- c("heart attack", "heart failure", "pneumonia")
+  validCheck <- as.numeric(0)
+  
+  #check for valid state
+  for (i in seq_along(uniqueST)){
+    if(uniqueST[i] == state){uniqCheck <- uniqCheck+1}
   }
+  if (uniqCheck == 0) stop(print("invalid state"))
+  
+  ##check outcome is valid
+  validCheck <- sum(outcome == validOutcome)
+  if (validCheck == 0) stop(print("invalid outcome"))
+ else {print("continue")}
   ##return the hospital name in that state with lowest 30-day death rate
-    
+  
 }
