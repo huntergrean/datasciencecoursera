@@ -1,7 +1,7 @@
 best <- function(state, outcome){
   ##read outcome data
   careMeasures <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
-  ##check state is valid
+
   #create vector of unique existing state names
   uniqueST <- unique(careMeasures[,7])
   uniqCheck <- as.numeric(0)
@@ -24,16 +24,22 @@ best <- function(state, outcome){
   ##first, create subset for state
   state_subset <- careMeasures[,7] == state
   ##create subset to drop all NAs
-  if(outcome=="heart attack"){na_subset <- is.na(as.numeric(careMeasures[,11]))}
-  if(outcome=="heart failure"){na_subset <- is.na(as.numeric(careMeasures[,17]))}
-  if(outcome=="pneumonia"){na_subset <- is.na(as.numeric(careMeasures[,23]))}
-  #combine subsets and apply to dataframe
-  master_subset <- state_subset*!na_subset
-  subCareM <- careM[master_subset]
-  ##get location of lowest value
-  if(outcome=="heart attack"){min_location <- which.min(subCareM[,11])}
-  if(outcome=="heart failure"){min_location <- which.min(subCareM[,17])}
-  if(outcome=="pneumonia"){min_location <- which.min(subCareM[,23])}
-  hospName <- subCareM[,2]
-  hospName[min_location]
+  if(outcome=="heart attack"){na_subset <- !is.na(as.numeric(careMeasures[,11]))}
+  if(outcome=="heart failure"){na_subset <- !is.na(as.numeric(careMeasures[,17]))}
+  if(outcome=="pneumonia"){na_subset <- !is.na(as.numeric(careMeasures[,23]))}
+  #combine subsets 
+  master_subset <- state_subset*na_subset
+  #create mortality rate object
+  if(outcome=="heart attack"){mortRate <- (as.numeric(careMeasures[,11]))}
+  if(outcome=="heart failure"){mortRate <- (as.numeric(careMeasures[,17]))}
+  if(outcome=="pneumonia"){mortRate <- (as.numeric(careMeasures[,23]))}
+  #filter mortality rate object
+  filtered_mortRate <- master_subset*mortRate
+  #get rid of zero values
+  filtered_mortRate[filtered_mortRate == 0] <- NA
+  #get minimum value
+  minMR <- min(filtered_mortRate, na.rm = TRUE)
+  hospital_name <- subset(careMeasures[,2], filtered_mortRate <= minMR)
+  
+  
 }
